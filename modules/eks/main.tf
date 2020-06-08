@@ -1,18 +1,11 @@
-data "aws_subnet_ids" "this" {
-  vpc_id = var.vpc_id
-}
-
-data "aws_subnet" "this" {
-  for_each = data.aws_subnet_ids.this.ids
-  id       = each.value
-}
-
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   role_arn = aws_iam_role.cluster.arn
 
   vpc_config {
-    subnet_ids = [for s in data.aws_subnet.this : s.id]
+    subnet_ids              = var.private_subnets
+    endpoint_private_access = true
+    endpoint_public_access  = true
   }
 
   depends_on = [
@@ -25,9 +18,9 @@ resource "aws_eks_cluster" "this" {
 
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.cluster_name}_workers"
+  node_group_name = "${var.cluster_name}-workers"
   node_role_arn   = aws_iam_role.node_group.arn
-  subnet_ids      = [for s in data.aws_subnet.this : s.id]
+  subnet_ids      = var.private_subnets
 
   instance_types = var.instance_types
 
@@ -42,4 +35,6 @@ resource "aws_eks_node_group" "this" {
     aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
   ]
+
+  tags = merge({ "Name" = "${var.cluster_name}" }, var.module_tags, var.tags)
 }
