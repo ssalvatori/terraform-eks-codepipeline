@@ -20,3 +20,6 @@ variable "author" {}
 variable "node_group_desired" {}
 variable "node_group_max" {}
 variable "node_group_min" {}
+
+
+variable "k8s_dashboard_csrf" {}

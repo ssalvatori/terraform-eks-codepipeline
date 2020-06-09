@@ -3,17 +3,31 @@
 * VPC creation using `terraform-aws-modules/vpc/aws`
 * EKS creation
 
+K8S dashboard
+* https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html
+
+## Access to k8s dashboard
+
 Setting Up kubectl 
 
 ```
-mkdir ~/.kube/
-terraform output kubeconfig > ~/.kube/config
-kubectl version
-terraform output config_map_aws_auth > configmap.yml
-kubectl get nodes -o wide
+aws --profile saml eks --region eu-central-1 update-kubeconfig --name eks-test
 ```
 
-Install k8s dashboard
+Get the auth token using
+```
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
+```
+
+Active proxy
+
+```
+kubectl proxy
+```
+
+```
+http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+```
 
 Install Helm
 

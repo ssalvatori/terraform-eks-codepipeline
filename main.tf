@@ -96,6 +96,9 @@ module "k8s" {
   k8s_host           = module.eks.endpoint
   k8s_ca_certificate = module.eks.ca_certificate
   k8s_token          = module.eks.token
+
+  k8s_dashboard_csrf = var.k8s_dashboard_csrf
+
 }
 
 data "aws_caller_identity" "current" {}
