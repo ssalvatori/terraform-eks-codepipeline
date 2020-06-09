@@ -90,6 +90,14 @@ module "eks" {
 
 }
 
+module "k8s" {
+  source = "./modules/k8s"
+
+  k8s_host           = module.eks.endpoint
+  k8s_ca_certificate = module.eks.ca_certificate
+  k8s_token          = module.eks.token
+}
+
 data "aws_caller_identity" "current" {}
 
 # module "build_pipeline" {
