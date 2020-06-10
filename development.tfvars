@@ -2,7 +2,8 @@
 # Development Environment
 #
 
-region                   = "eu-central-1"
+region                   = "eu-west-1"
+vpc_azs                  = ["eu-west-1c", "eu-west-1a", "eu-west-1b"]
 cluster_name             = "eks-test"
 environment_name         = "dev"
 github_repository_name   = "eks_sample_app"

@@ -2,6 +2,8 @@ variable "region" {}
 
 # variable "vpc_id" {}
 
+variable "vpc_azs" {}
+
 variable "environment_name" {}
 
 variable "cluster_name" {}

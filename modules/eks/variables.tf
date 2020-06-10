@@ -27,3 +27,5 @@ variable "node_group_min" {
 variable "instance_types" {
   default = ["t3.medium"]
 }
+
+variable "workstation-external-cidr" {}

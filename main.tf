@@ -30,7 +30,7 @@ module "vpc" {
   name = "eks-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["eu-central-1c", "eu-central-1a", "eu-central-1b"]
+  azs             = var.vpc_azs
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 
@@ -88,6 +88,8 @@ module "eks" {
   node_group_max     = var.node_group_max
   node_group_min     = var.node_group_min
 
+  workstation-external-cidr = local.workstation-external-cidr
+
 }
 
 module "k8s" {
@@ -98,6 +100,23 @@ module "k8s" {
   k8s_token          = module.eks.token
 
   k8s_dashboard_csrf = var.k8s_dashboard_csrf
+  eks_depends_on     = [module.eks.cluster_id, module.eks.depends_on_workstation]
+}
+
+module "gocd" {
+  source                    = "./modules/gocd"
+  vpc_id                    = module.vpc.vpc_id
+  vpc_az                    = var.vpc_azs.0
+  vpc_subnet_id             = module.vpc.public_subnets.0
+  vpc_cidr_block            = module.vpc.vpc_cidr_block
+  workstation-external-cidr = local.workstation-external-cidr
+
+  ssh_access = true
+
+  tags = {
+    Author   = var.author
+    Git_Hash = module.git-hash.stdout
+  }
 
 }
 
